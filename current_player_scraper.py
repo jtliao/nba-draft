@@ -20,7 +20,13 @@ for year in range(2005, 2017):
     soup = BeautifulSoup(data, "html.parser")
     # print(soup.prettify())
 
-    profile_urls = [tag["href"] for tag in soup.find_all(name="a", href=re.compile(r"\/profile\/.+"))]
+    profile_urls = []
+    for possible_player in soup.find_all(name="a", href=re.compile(r"\/profile\/.+")):
+        if (possible_player.parent.name == "td" and "class" in possible_player.parent.attrs
+            and "columna-4" in possible_player.parent["class"]):
+            # print("HERE")
+            profile_urls.append(possible_player["href"])
+    print(profile_urls)
 
     for profile_url in profile_urls:
     # for profile_url in [profile_urls[0]]:
