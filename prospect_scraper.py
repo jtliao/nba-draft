@@ -6,16 +6,16 @@ import json
 prospect_to_docs = {}
 
 #page of the top 100 prospects
-profile_urls = []
-for page in range(1, 5):
-    url = "http://www.draftexpress.com/rankings/Top-100-Prospects/" + str(page)
+profile_urls = set()
+url = "http://www.draftexpress.com/rankings/Top-100-Prospects/#list"
     
-    r = requests.get(url)
-    data = r.text
+r = requests.get(url)
+data = r.text
     
-    soup = BeautifulSoup(data, "html.parser")
+soup = BeautifulSoup(data, "html.parser")
     
-    profile_urls.extend([tag["href"] for tag in soup.find_all(name="a", href=re.compile(r"\/profile\/.+"))])
+profile_urls = {tag["href"] for tag in soup.find_all(name="a", href=re.compile(r"\/profile\/.+")) 
+                if "/stats" not in tag["href"] and "/videos" not in tag["href"]}
 
 for profile_url in profile_urls:
     player_name = re.findall(r"\/profile\/([^\/]+)", profile_url)[0]
@@ -27,18 +27,18 @@ for profile_url in profile_urls:
     profile_data = profile_r.text
 
     profile_soup = BeautifulSoup(profile_data, "html.parser")
-    # print(profile_soup.prettify())
-    # print(profile_soup.get_text())
 
     text = []
-    for p in profile_soup.find_all(name="p"):
-        # print(p)
-        if p.parent.name == "div" and "item" in p.parent["class"]:
-            text.append(p.get_text())
-    print(text)
+    for a in profile_soup.find_all(class_="article-content"):    
+        cleaned = re.sub(r'<.+>', '', a.get_text())
+        cleaned = re.sub(r'<div>.+<\/div>', '', cleaned)
+        text.append(cleaned)
+        #if a.parent.name == "div" and "item" in p.parent["class"]:
+        #    text.append(a.get_text())
 
     prospect_to_docs[player_name] = text
 
 with open("prospect_to_docs.json", "w") as f:
     json.dump(prospect_to_docs, f)
+    
     
