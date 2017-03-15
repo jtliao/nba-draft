@@ -36,7 +36,8 @@ for profile_url in profile_urls:
         #if a.parent.name == "div" and "item" in p.parent["class"]:
         #    text.append(a.get_text())
 
-    prospect_to_docs[player_name] = text
+    # Try unifying all the articles into a single long doc
+    prospect_to_docs[player_name] = " ".join(text)
 
 with open("prospect_to_docs.json", "w") as f:
     json.dump(prospect_to_docs, f)

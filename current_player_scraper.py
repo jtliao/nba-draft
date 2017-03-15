@@ -8,7 +8,7 @@ import sys
 # for year in range(1994, 2017):
 
 
-sys.stdout = open("out.text", "w")
+# sys.stdout = open("out.text", "w")
 
 
 player_to_docs = {}
@@ -20,8 +20,8 @@ blank_descriptions = []
 # Just start with years 2005-2016
 for year in range(2005, 2017):
 # for year in [2016]:
-    url = "http://www.draftexpress.com/nba-draft-history/?syear=" + str(year)
-    # print(url)
+#     url = "http://www.draftexpress.com/nba-draft-history/?syear=" + str(year)
+    url = "http://www.draftexpress.com/nba-mock-history/" + str(year) + "/all/all/"
 
     r = requests.get(url)
     data = r.text
@@ -32,7 +32,7 @@ for year in range(2005, 2017):
     profile_urls = []
     for possible_player in soup.find_all(name="a", href=re.compile(r"\/profile\/.+")):
         if (possible_player.parent.name == "td" and "class" in possible_player.parent.attrs
-            and "columna-4" in possible_player.parent["class"]):
+            and "key" in possible_player.parent["class"] and "text" in possible_player.parent["class"]):
             # print("HERE")
             profile_urls.append(possible_player["href"])
     print(profile_urls)
@@ -59,26 +59,33 @@ for year in range(2005, 2017):
         # print(profile_soup.prettify())
         # print(profile_soup.get_text())
 
+        # text = []
+        # for p in profile_soup.find_all(name="p"):
+        #     # print(p)
+        #     if p.parent.name == "div" and "item" in p.parent["class"]:
+        #         text.append(p.get_text())
+
         text = []
-        for p in profile_soup.find_all(name="p"):
-            # print(p)
-            if p.parent.name == "div" and "item" in p.parent["class"]:
-                text.append(p.get_text())
+        for a in profile_soup.find_all(class_="article-content"):
+            cleaned = re.sub(r'<.+>', '', a.get_text())
+            cleaned = re.sub(r'<div>.+<\/div>', '', cleaned)
+            text.append(cleaned)
 
         if len(text) == 0:
             blank_descriptions.append(profile_url)
 
         print(text)
-        player_to_docs[player_name] = text
+        # Try unifying all the articles into a single long doc
+        player_to_docs[player_name] = " ".join(text)
 
-with open("player_to_docs.json", "w") as f:
+with open("curr_player_to_docs.json", "w") as f:
     json.dump(player_to_docs, f)
 
-with open("invalid_names.json", "w") as f:
-    json.dump(invalid_names, f)
+# with open("invalid_names.json", "w") as f:
+#     json.dump(invalid_names, f)
+#
+# with open("blank_descriptions.json", "w") as f:
+#     json.dump(blank_descriptions, f)
 
-with open("blank_descriptions.json", "w") as f:
-    json.dump(blank_descriptions, f)
 
-
-sys.stdout.close()
+# sys.stdout.close()
