@@ -35,7 +35,6 @@ for year in range(2005, 2017):
             and "key" in possible_player.parent["class"] and "text" in possible_player.parent["class"]):
             # print("HERE")
             profile_urls.append(possible_player["href"])
-    print(profile_urls)
 
 
     for profile_url in profile_urls:
@@ -48,7 +47,6 @@ for year in range(2005, 2017):
             invalid_names.append(profile_url)
 
         player_name = " ".join(split_player_name)
-        print(player_name)
 
 
         full_profile_url = "http://www.draftexpress.com" + str(profile_url)
@@ -74,7 +72,6 @@ for year in range(2005, 2017):
         if len(text) == 0:
             blank_descriptions.append(profile_url)
 
-        print(text)
         # Try unifying all the articles into a single long doc
         player_to_docs[player_name] = " ".join(text)
 
