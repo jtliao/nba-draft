@@ -12,6 +12,7 @@ import sys
 
 
 player_to_docs = {}
+player_to_position = {}
 
 invalid_names = []
 blank_descriptions = []
@@ -62,11 +63,19 @@ for year in range(2005, 2017):
         #     # print(p)
         #     if p.parent.name == "div" and "item" in p.parent["class"]:
         #         text.append(p.get_text())
+        
+        m = re.search('Position:\s(\S+)', profile_soup.get_text())
+        player_to_position[player_name] = m.group(1)
 
         text = []
         for a in profile_soup.find_all(class_="article-content"):
             cleaned = re.sub(r'<.+>', '', a.get_text())
             cleaned = re.sub(r'<div>.+<\/div>', '', cleaned)
+            cleaned = re.sub(r"\([\S\s]+\)", "", cleaned)
+            cleaned = cleaned.replace("-", " ")
+            cleaned = cleaned.replace("#", "")
+            cleaned = cleaned.replace("%", "")
+            cleaned = cleaned.replace("Please enable Javascript to watch this video", "")
             text.append(cleaned)
 
         if len(text) == 0:
@@ -77,6 +86,9 @@ for year in range(2005, 2017):
 
 with open("curr_player_to_docs.json", "w") as f:
     json.dump(player_to_docs, f)
+    
+with open("curr_player_to_position.json", "w") as f:
+    json.dump(player_to_position, f)
 
 # with open("invalid_names.json", "w") as f:
 #     json.dump(invalid_names, f)
