@@ -69,7 +69,7 @@ for year in range(2005, 2017):
         for a in profile_soup.find_all(class_="article-content"):
             cleaned = re.sub(r'<.+>', '', a.get_text())
             cleaned = re.sub(r'<div>.+<\/div>', '', cleaned)
-            text.append(cleaned)
+            text.append(cleaned.encode("utf-8"))
 
         if len(text) == 0:
             blank_descriptions.append(profile_url)
@@ -78,8 +78,8 @@ for year in range(2005, 2017):
         # Try unifying all the articles into a single long doc
         player_to_docs[player_name] = " ".join(text)
 
-with open("curr_player_to_docs.json", "w") as f:
-    json.dump(player_to_docs, f)
+with open("curr_player_to_docs_unicode.json", "w") as f:
+    json.dump(player_to_docs, f, ensure_ascii=False)
 
 # with open("invalid_names.json", "w") as f:
 #     json.dump(invalid_names, f)

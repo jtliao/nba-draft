@@ -32,14 +32,14 @@ for profile_url in profile_urls:
     for a in profile_soup.find_all(class_="article-content"):    
         cleaned = re.sub(r'<.+>', '', a.get_text())
         cleaned = re.sub(r'<div>.+<\/div>', '', cleaned)
-        text.append(cleaned)
+        text.append(cleaned.encode("utf-8"))
         #if a.parent.name == "div" and "item" in p.parent["class"]:
         #    text.append(a.get_text())
 
     # Try unifying all the articles into a single long doc
     prospect_to_docs[player_name] = " ".join(text)
 
-with open("prospect_to_docs.json", "w") as f:
-    json.dump(prospect_to_docs, f)
+with open("prospect_to_docs_unicode.json", "w") as f:
+    json.dump(prospect_to_docs, f, ensure_ascii=False)
     
     
