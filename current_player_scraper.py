@@ -84,7 +84,7 @@ for year in range(2005, 2017):
         # Try unifying all the articles into a single long doc
         player_to_docs[player_name] = " ".join(text)
 
-with open("curr_player_to_docs_unicode.json", "w") as f:
+with open("curr_player_to_docs.json", "w") as f:
     json.dump(player_to_docs, f)
     
 with open("curr_player_to_position.json", "w") as f:
