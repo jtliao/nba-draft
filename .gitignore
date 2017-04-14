@@ -2,3 +2,5 @@
 *.json
 *.text
 .ipynb_checkpoints
+*.txt
+*.pkl
